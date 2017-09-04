@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Udacity Baking App</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="error_unknown">Unknown Error, please try again!</string>
+    <string name="default_request_error_internal_server">Internal Server Error, please try again!</string>
+    <string name="default_request_error_timeout">Request Timeout, please try again in a few seconds</string>
+    <string name="buffering">Buffering...</string>
+</resources>
