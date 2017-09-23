@@ -1,7 +1,6 @@
 package com.nisie.udacitybakingapp.recipe.view.fragment;
 
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -43,6 +43,7 @@ public class StepFragment extends Fragment {
     private static final String ARGS_POSITION = "ARGS_POSITION";
     StepViewModel data;
     TextView title;
+    ImageView imgThumbnail;
     SimpleExoPlayerView playerView;
     SimpleExoPlayer player;
     private ProgressDialog progressDialog;
@@ -80,6 +81,7 @@ public class StepFragment extends Fragment {
         if (!isLandscape)
             title = (TextView) v.findViewById(R.id.title);
         playerView = (SimpleExoPlayerView) v.findViewById(R.id.video_player);
+        imgThumbnail = (ImageView) v.findViewById(R.id.img_thumbnail);
         componentListener = new ComponentListener();
         return v;
     }
@@ -113,16 +115,24 @@ public class StepFragment extends Fragment {
 
             getActivity().setTitle(data.getShortDescription());
 
-            if (!isLandscape)
-
-
+            if (!isLandscape) {
                 title.setText(data.getDescription());
+            }
 
             if (!TextUtils.isEmpty(data.getVideoURL())) {
                 playerView.setVisibility(View.VISIBLE);
                 initializePlayer();
             } else
                 playerView.setVisibility(View.GONE);
+
+            if (TextUtils.isEmpty(data.getVideoURL())
+                    && !TextUtils.isEmpty(data.getThumbnailURL())) {
+                playerView.setVisibility(View.GONE);
+                imgThumbnail.setVisibility(View.VISIBLE);
+            } else
+                imgThumbnail.setVisibility(View.GONE);
+
+
         }
     }
 
@@ -239,6 +249,20 @@ public class StepFragment extends Fragment {
         @Override
         public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
 
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(ARGS_POSITION, playbackPosition);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            this.playbackPosition = savedInstanceState.getLong(ARGS_POSITION, 0);
         }
     }
 }

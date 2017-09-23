@@ -1,6 +1,7 @@
 package com.nisie.udacitybakingapp.recipe.view.activity;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,8 +15,8 @@ import com.nisie.udacitybakingapp.recipe.domain.mapper.RecipeMapper;
 import com.nisie.udacitybakingapp.recipe.domain.network.BakingService;
 import com.nisie.udacitybakingapp.recipe.domain.repository.BakingRepository;
 import com.nisie.udacitybakingapp.recipe.domain.repository.BakingRepositoryImpl;
-import com.nisie.udacitybakingapp.recipe.view.listener.Recipe;
 import com.nisie.udacitybakingapp.recipe.view.adapter.RecipeAdapter;
+import com.nisie.udacitybakingapp.recipe.view.listener.Recipe;
 import com.nisie.udacitybakingapp.recipe.view.presenter.RecipePresenterImpl;
 import com.nisie.udacitybakingapp.recipe.view.viewmodel.RecipeViewModel;
 
@@ -24,10 +25,13 @@ import java.util.List;
 public class RecipeActivity extends AppCompatActivity
         implements Recipe.View {
 
+    private static final String KEY_RECYCLER_STATE = "KEY_RECYCLER_STATE";
+    private static final String KEY_RECYCLER_ITEMS = "KEY_RECYCLER_ITEMS";
     RecyclerView recipeList;
     RecipeAdapter adapter;
     Recipe.Presenter presenter;
     boolean tabletSize;
+    private static Bundle mBundleRecyclerViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,9 @@ public class RecipeActivity extends AppCompatActivity
     }
 
     private void initData() {
-        presenter.getRecipe();
+        if (mBundleRecyclerViewState == null
+                && adapter.getItemCount() == 0)
+            presenter.getRecipe();
     }
 
     @Override
@@ -102,5 +108,36 @@ public class RecipeActivity extends AppCompatActivity
     @Override
     public void onGoToDetailRecipe(RecipeViewModel recipeViewModel) {
         startActivity(RecipeDetailActivity.getCallingIntent(this, recipeViewModel));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = recipeList.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+        outState.putParcelable(KEY_RECYCLER_STATE, mBundleRecyclerViewState);
+        outState.putParcelableArrayList(KEY_RECYCLER_ITEMS, adapter.getList());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            mBundleRecyclerViewState = savedInstanceState.getParcelable(KEY_RECYCLER_STATE);
+            if (adapter != null) {
+                adapter.setList(savedInstanceState.<RecipeViewModel>getParcelableArrayList(KEY_RECYCLER_ITEMS));
+            }
+
+            if (mBundleRecyclerViewState != null) {
+                Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+                recipeList.getLayoutManager().onRestoreInstanceState(listState);
+            }
+        }
     }
 }

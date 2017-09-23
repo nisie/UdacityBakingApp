@@ -28,6 +28,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    public ArrayList<RecipeViewModel> getList() {
+        return list;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView recipeName;
 
