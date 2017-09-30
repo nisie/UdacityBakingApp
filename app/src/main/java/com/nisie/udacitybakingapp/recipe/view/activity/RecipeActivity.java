@@ -59,7 +59,7 @@ public class RecipeActivity extends AppCompatActivity
         RecipeMapper recipeMapper = new RecipeMapper();
 
         BakingRepository bakingRepository = new BakingRepositoryImpl(
-                bakingService, recipeMapper
+                this, bakingService, recipeMapper
         );
 
         GetRecipeUseCase getRecipeUseCase = new GetRecipeUseCase(

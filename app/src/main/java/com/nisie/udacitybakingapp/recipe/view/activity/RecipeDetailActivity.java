@@ -2,10 +2,13 @@ package com.nisie.udacitybakingapp.recipe.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.nisie.udacitybakingapp.R;
@@ -23,12 +26,44 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     private static final String ARGS_DATA = RecipeDetailActivity.class.getSimpleName() + "ARGS_DATA";
     RecipeViewModel data;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_recipe);
         initView(savedInstanceState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_favorite, menu);
+        this.menu = menu;
+        checkIsFavorite(data.getId());
+        return true;
+    }
+
+
+    private void checkIsFavorite(int id) {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                getString(R.string.widget_shown_recipe), Context.MODE_PRIVATE);
+        MenuItem favorite = menu.findItem(R.id.favorite);
+        if (sharedPreferences.getInt(getString(R.string.widget_shown_recipe), 0) == id) {
+            setMenuFavorite(favorite);
+        } else {
+            setUnFavorite(favorite);
+        }
+
+    }
+
+    private void setUnFavorite(MenuItem item) {
+        item.setIcon(getResources().getDrawable(R.drawable.ic_star_border_white_24dp));
+
+    }
+
+    private void setMenuFavorite(MenuItem item) {
+        item.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
     }
 
     private void initView(Bundle savedInstanceState) {
@@ -57,12 +92,25 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.favorite:
+                onFavoriteClicked(item);
+                return true;
         }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void onFavoriteClicked(MenuItem item) {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                getString(R.string.widget_shown_recipe), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.widget_shown_recipe), data.getId());
+        editor.apply();
+        setMenuFavorite(item);
     }
 
     public static Intent getCallingIntent(Context context, RecipeViewModel recipeViewModel) {
