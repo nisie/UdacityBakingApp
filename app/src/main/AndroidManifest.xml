@@ -3,8 +3,10 @@
           package="com.nisie.udacitybakingapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".main.presentation.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -38,6 +40,15 @@
             android:name="com.nisie.udacitybakingapp.recipe.data.RecipeContentProvider"
             android:authorities="com.nisie.udacitybakingapp"
             android:exported="false"/>
+
+
+        <receiver
+            android:name=".main.presentation.util.ConnectivityReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 

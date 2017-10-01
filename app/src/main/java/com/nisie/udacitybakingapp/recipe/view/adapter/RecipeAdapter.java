@@ -1,12 +1,15 @@
 package com.nisie.udacitybakingapp.recipe.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nisie.udacitybakingapp.R;
+import com.nisie.udacitybakingapp.main.presentation.util.ImageHandler;
 import com.nisie.udacitybakingapp.recipe.view.listener.Recipe;
 import com.nisie.udacitybakingapp.recipe.view.viewmodel.RecipeViewModel;
 
@@ -34,9 +37,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView recipeName;
+        ImageView recipeImage;
 
         ViewHolder(View itemView) {
             super(itemView);
+            recipeImage = itemView.findViewById(R.id.recipe_image);
             recipeName = itemView.findViewById(R.id.recipe_name);
             recipeName.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,6 +67,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.recipeName.setText(list.get(position).getName());
+        if (!TextUtils.isEmpty(list.get(position).getImage())) {
+            ImageHandler.loadImageFromUrl(holder.recipeImage, list.get(position).getImage());
+        }
     }
 
     @Override

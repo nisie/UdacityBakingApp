@@ -6,10 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import com.nisie.udacitybakingapp.R;
 import com.nisie.udacitybakingapp.main.domain.executor.JobExecutor;
+import com.nisie.udacitybakingapp.main.presentation.MyApplication;
 import com.nisie.udacitybakingapp.main.presentation.UIThread;
+import com.nisie.udacitybakingapp.main.presentation.util.ConnectivityReceiver;
 import com.nisie.udacitybakingapp.recipe.domain.interactor.GetRecipeUseCase;
 import com.nisie.udacitybakingapp.recipe.domain.mapper.RecipeMapper;
 import com.nisie.udacitybakingapp.recipe.domain.network.BakingService;
@@ -23,7 +26,7 @@ import com.nisie.udacitybakingapp.recipe.view.viewmodel.RecipeViewModel;
 import java.util.List;
 
 public class RecipeActivity extends AppCompatActivity
-        implements Recipe.View {
+        implements Recipe.View, ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final String KEY_RECYCLER_STATE = "KEY_RECYCLER_STATE";
     private static final String KEY_RECYCLER_ITEMS = "KEY_RECYCLER_ITEMS";
@@ -87,7 +90,7 @@ public class RecipeActivity extends AppCompatActivity
 
     @Override
     public void onErrorGetRecipe() {
-
+        Toast.makeText(this, "Error receiving data. Please try again later", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -140,4 +143,19 @@ public class RecipeActivity extends AppCompatActivity
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if (!isConnected)
+            Toast.makeText(this, "No network connection. Please close the app and try again later",
+                    Toast.LENGTH_LONG)
+                    .show();
+    }
+
 }

@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.nisie.udacitybakingapp.R;
+import com.nisie.udacitybakingapp.main.presentation.util.ImageHandler;
 import com.nisie.udacitybakingapp.recipe.view.viewmodel.StepViewModel;
 
 /**
@@ -129,6 +130,7 @@ public class StepFragment extends Fragment {
                     && !TextUtils.isEmpty(data.getThumbnailURL())) {
                 playerView.setVisibility(View.GONE);
                 imgThumbnail.setVisibility(View.VISIBLE);
+                ImageHandler.loadImageFromUrl(imgThumbnail, data.getThumbnailURL());
             } else
                 imgThumbnail.setVisibility(View.GONE);
 
