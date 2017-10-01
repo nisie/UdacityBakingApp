@@ -1,5 +1,7 @@
 package com.nisie.udacitybakingapp.recipe.view.listener;
 
+import android.support.test.espresso.IdlingResource;
+
 import com.nisie.udacitybakingapp.main.presentation.BasePresenter;
 import com.nisie.udacitybakingapp.recipe.view.viewmodel.RecipeViewModel;
 
@@ -27,5 +29,6 @@ public interface Recipe {
 
         void onGoToDetailRecipe(RecipeViewModel recipeViewModel);
 
+        IdlingResource getIdlingResource();
     }
 }
